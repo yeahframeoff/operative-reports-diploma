@@ -5,5 +5,3 @@ gunicorn==19.4.5
 Markdown==2.6.6
 whitenoise==3.0
 djoser==0.4.3
-psycopg2==2.6.1
-dj-database-url==0.4.1
