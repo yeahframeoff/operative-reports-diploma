@@ -9,8 +9,7 @@ def hello(request):
     return HttpResponse('Hello! ' * times)
 
 
-def db_info(request):
-
+def db_test(request):
     user = os.getenv('TEST_DB_USERNAME')
     pwd = os.getenv('TEST_DB_PASSWORD')
     host = os.getenv('TEST_DB_HOST')

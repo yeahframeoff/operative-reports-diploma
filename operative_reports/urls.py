@@ -16,10 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from .view import hello, db_info
+from .view import hello, db_test
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('djoser.urls.authtoken')),
     url(r'^hello', hello),
-    url(r'^db_info/', db_info),
+    url(r'^db_info/', db_test),
 ]
