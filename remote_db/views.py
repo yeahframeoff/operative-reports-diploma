@@ -6,7 +6,7 @@ from .serializers import DBConnectionSerializer, WidgetConfigSerializer
 from .models import DbConnection, DIAGRAM_TYPES, WidgetConfig
 
 
-class DatabaseConnectionCreateAPIView(generics.CreateAPIView):
+class DatabaseConnectionCreateAPIView(generics.ListCreateAPIView):
     serializer_class = DBConnectionSerializer
     queryset = DbConnection.objects.all()
 
@@ -19,7 +19,7 @@ class DatabaseConnectionAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = DbConnection.objects.all()
 
 
-class WidgetConfigCreateAPIView(generics.CreateAPIView):
+class WidgetConfigCreateAPIView(generics.ListCreateAPIView):
     serializer_class = WidgetConfigSerializer
     queryset = WidgetConfig.objects.all()
 
