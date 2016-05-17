@@ -28,4 +28,6 @@ urlpatterns = [
     url(r'^api/diagram-types/?', remote_db_views.get_types),
     url(r'^remote-db/(?P<pk>\d+)/?', remote_db_views.DatabaseConnectionAPIView.as_view()),
     url(r'^remote-db/', remote_db_views.DatabaseConnectionCreateAPIView.as_view()),
+    url(r'^widgets/(?P<pk>\d+)/?', remote_db_views.WidgetConfigAPIView.as_view()),
+    url(r'^widgets/', remote_db_views.WidgetConfigCreateAPIView.as_view()),
 ]

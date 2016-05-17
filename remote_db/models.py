@@ -38,3 +38,9 @@ class DbConnection(models.Model):
         db = self.get_config()
         backend = load_backend(db['ENGINE'])
         return backend.DatabaseWrapper(db, "remote postgres")
+
+
+class WidgetConfig(models.Model):
+    diagram_type = models.CharField(max_length=1, choices=DIAGRAM_TYPES)
+    query = models.TextField()
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
