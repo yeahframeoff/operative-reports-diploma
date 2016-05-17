@@ -16,9 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from .view import hello
+from .view import hello, db_info
 urlpatterns = [
-    url(r'^hello', hello),
     url(r'^admin/', admin.site.urls),
-    url(r'^auth/', include('djoser.urls.authtoken'))
+    url(r'^auth/', include('djoser.urls.authtoken')),
+    url(r'^hello', hello),
+    url(r'^db_info/', db_info),
 ]
