@@ -16,10 +16,15 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from remote_db import views as remote_db_views
+
+
 from .view import hello, db_test
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('djoser.urls.authtoken')),
     url(r'^hello', hello),
     url(r'^db_info/', db_test),
+    url(r'^remote-db/(?P<pk>\d+)/?', remote_db_views.DatabaseConnectionAPIView.as_view()),
+    url(r'^remote-db/', remote_db_views.DatabaseConnectionCreateAPIView.as_view())
 ]
