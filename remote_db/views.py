@@ -21,4 +21,4 @@ class DatabaseConnectionAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 @api_view(['GET'])
 def get_types(request):
-    return Response(DIAGRAM_TYPES)
+    return Response(dict(DIAGRAM_TYPES))
