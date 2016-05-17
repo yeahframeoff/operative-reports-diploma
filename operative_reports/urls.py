@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^auth/', include('djoser.urls.authtoken')),
     url(r'^hello', hello),
     url(r'^db_info/', db_test),
+    url(r'^api/diagram-types/?', remote_db_views.get_types),
     url(r'^remote-db/(?P<pk>\d+)/?', remote_db_views.DatabaseConnectionAPIView.as_view()),
-    url(r'^remote-db/', remote_db_views.DatabaseConnectionCreateAPIView.as_view())
+    url(r'^remote-db/', remote_db_views.DatabaseConnectionCreateAPIView.as_view()),
 ]

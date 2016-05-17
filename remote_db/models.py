@@ -3,6 +3,13 @@ from django.db import models
 from django.db.utils import load_backend
 
 
+DIAGRAM_TYPES = [
+    ('R', 'Round'),
+    ('S', 'Stacked'),
+    ('C', 'Curve'),
+]
+
+
 class DbConnection(models.Model):
     host = models.GenericIPAddressField()
     port = models.PositiveSmallIntegerField(null=False, default=5432)
