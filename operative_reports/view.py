@@ -26,6 +26,7 @@ def db_info(request):
         'TIME_ZONE': None,
         'CONN_MAX_AGE': 500,
         'AUTOCOMMIT': None,
+        'OPTIONS': {}
     }
 
     backend = load_backend(db['ENGINE'])
