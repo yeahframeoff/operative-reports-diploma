@@ -26,8 +26,13 @@ urlpatterns = [
     url(r'^hello', hello),
     url(r'^db_info/', db_test),
     url(r'^api/diagram-types/?', remote_db_views.get_types),
-    url(r'^remote-db/(?P<pk>\d+)/?', remote_db_views.DatabaseConnectionAPIView.as_view()),
-    url(r'^remote-db/', remote_db_views.DatabaseConnectionCreateAPIView.as_view()),
+    url(r'^remote-db/$', remote_db_views.DatabaseConnectionCreateAPIView.as_view()),
+    url(r'^remote-db/check-connection', remote_db_views.check_connection_instant),
+    url(r'^remote-db/(?P<pk>\d+)/?$', remote_db_views.DatabaseConnectionAPIView.as_view()),
+    url(r'^remote-db/(?P<pk>\d+)/schema', remote_db_views.get_db_schema),
+    url(r'^remote-db/(?P<pk>\d+)/check-connection', remote_db_views.check_connection),
+
+    url(r'^widgets/$', remote_db_views.WidgetConfigCreateAPIView.as_view()),
     url(r'^widgets/(?P<pk>\d+)/?', remote_db_views.WidgetConfigAPIView.as_view()),
-    url(r'^widgets/', remote_db_views.WidgetConfigCreateAPIView.as_view()),
+
 ]

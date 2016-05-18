@@ -2,6 +2,7 @@ import os
 
 from django.db.utils import load_backend
 from django.http import HttpResponse, JsonResponse
+import psycopg2
 
 
 def hello(request):
