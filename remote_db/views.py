@@ -55,7 +55,7 @@ def get_db_schema(request, pk):
     db_conf = DbConnection.objects.get(pk=pk)
     connection = db_conf.conn
     cursor = connection.cursor()
-    qqq = """
+    query = """
         SELECT table_name,
                COLUMN_NAME,
                udt_name as short_type_name,
@@ -65,25 +65,24 @@ def get_db_schema(request, pk):
         WHERE table_catalog = '%s' and table_schema = 'public'
         ORDER BY ordinal_position;
     """ % db_conf.db_name
-    # qqq = """\d foo"""
-    cursor.execute(qqq)
+    cursor.execute(query)
     data = dictfetchall(cursor)
     connection.close()
     return JsonResponse(data, safe=False)
 
 
+def _check_connection(db_conf):
+    result = db_conf.check_connection()
+    if result.success:
+        return JsonResponse({'result': "success"}, status=200, safe=False)
+    else:
+        return JsonResponse({'result': "fail", "error": result.error_message}, status=400, safe=False)
+
+
 @api_view(['GET'])
 def check_connection(request, pk):
     db_conf = DbConnection.objects.get(pk=pk)
-
-    try:
-        params = db_conf.conn.get_connection_params()
-        conn = psycopg2.connect(**params)
-        conn.close()
-        return JsonResponse({'result': "success"}, status=200, safe=False)
-    except Exception as e:
-        error_message = str(e)
-        return JsonResponse({'result': "fail", "error": error_message}, status=400, safe=False)
+    return _check_connection(db_conf)
 
 
 @api_view(['POST'])
@@ -96,12 +95,4 @@ def check_connection_instant(request):
         'db_name': request.POST.get('db_name'),
     }
     db_conf = DbConnection(**data)
-
-    try:
-        params = db_conf.conn.get_connection_params()
-        conn = psycopg2.connect(**params)
-        conn.close()
-        return JsonResponse({'result': "success"}, status=200, safe=False)
-    except Exception as e:
-        error_message = str(e)
-        return JsonResponse({'result': "fail", "error": error_message}, status=400, safe=False)
+    return _check_connection(db_conf)

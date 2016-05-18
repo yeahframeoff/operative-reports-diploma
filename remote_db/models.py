@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 from django.conf import settings
 from django.db import models
 from django.db.utils import load_backend
@@ -38,6 +40,19 @@ class DbConnection(models.Model):
         db = self.get_config()
         backend = load_backend(db['ENGINE'])
         return backend.DatabaseWrapper(db, "remote postgres")
+
+    CheckConnectionResult = namedtuple('CheckConnectionResult', ('success', 'error_message'))
+
+    def check_connection(self):
+        import psycopg2
+        try:
+            params = self.conn.get_connection_params()
+            conn = psycopg2.connect(**params)
+            conn.close()
+            return self.CheckConnectionResult(True, None)
+        except Exception as e:
+            error_message = str(e)
+            return self.CheckConnectionResult(False, error_message)
 
 
 class WidgetConfig(models.Model):
