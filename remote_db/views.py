@@ -67,6 +67,22 @@ def get_db_schema(request, pk):
     """ % db_conf.db_name
     cursor.execute(query)
     data = dictfetchall(cursor)
+
+    grouped = {}
+
+    for item in data:
+        item_cp = dict((k, item[k]) for k in item if k != 'table_name')
+        table_name = item['table_name']
+        grouped.setdefault(table_name, []).append(item_cp)
+    print(grouped)
+    tables = [
+        {
+            'table_name': k,
+            'columns': grouped[k]
+        } for k in grouped
+    ]
+    print(tables)
+
     connection.close()
     return JsonResponse(data, safe=False)
 
