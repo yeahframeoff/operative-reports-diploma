@@ -90,25 +90,31 @@ def get_db_schema(request, pk):
 def _check_connection(db_conf):
     result = db_conf.check_connection()
     if result.success:
-        return JsonResponse({'result': "success"}, status=200, safe=False)
+        return Response({'detail': "success"}, status=200)
     else:
-        return JsonResponse({'result': "fail", "error": result.error_message}, status=400, safe=False)
+        return Response({'detail': "fail",
+                         "error": result.error_message},
+                        status=400)
 
 
-@api_view(['GET'])
-def check_connection(request, pk):
-    db_conf = DbConnection.objects.get(pk=pk)
-    return _check_connection(db_conf)
+class CheckConnectionView(generics.GenericAPIView):
+
+    serializer_class = DBConnectionSerializer
+    queryset = DbConnection.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        db_conf = self.get_object()
+        return _check_connection(db_conf)
 
 
-@api_view(['POST'])
-def check_connection_instant(request):
-    data = {
-        'user': request.POST.get('user'),
-        'password': request.POST.get('password'),
-        'host': request.POST.get('host'),
-        'port': int(request.POST.get('port')),
-        'db_name': request.POST.get('db_name'),
-    }
-    db_conf = DbConnection(**data)
-    return _check_connection(db_conf)
+class CheckConnectionInstantView(generics.GenericAPIView):
+
+    serializer_class = DBConnectionSerializer
+    queryset = DbConnection.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        db_conf = DbConnection(**data)
+        return _check_connection(db_conf)
