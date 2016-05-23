@@ -1,10 +1,11 @@
 from django.http import JsonResponse
 from rest_framework import generics
 from rest_framework.decorators import api_view
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
-from .serializers import DBConnectionSerializer, WidgetConfigSerializer
-from .models import DbConnection, DIAGRAM_TYPES, WidgetConfig
+from .serializers import DBConnectionSerializer, WidgetSerializer, DashboardSerializer, WidgetCreateSerializer
+from .models import DbConnection, DIAGRAM_TYPES, Widget, Dashboard
 
 
 class DatabaseConnectionCreateAPIView(generics.ListCreateAPIView):
@@ -20,17 +21,29 @@ class DatabaseConnectionAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = DbConnection.objects.all()
 
 
-class WidgetConfigCreateAPIView(generics.ListCreateAPIView):
-    serializer_class = WidgetConfigSerializer
-    queryset = WidgetConfig.objects.all()
+class DashboardCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = DashboardSerializer
+    queryset = Dashboard.objects.all()
+
+
+class DashboardAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = DashboardSerializer
+    queryset = Dashboard.objects.all()
+
+
+class WidgetCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = WidgetCreateSerializer
+    queryset = Widget.objects.all()
+
+    lookup_field = 'dashboard_pk'
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        serializer.save(dashboard_id=self.kwargs['dashboard_pk'])
 
 
-class WidgetConfigAPIView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = WidgetConfigSerializer
-    queryset = WidgetConfig.objects.all()
+class WidgetAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = WidgetSerializer
+    queryset = Widget.objects.all()
 
 
 @api_view(['GET'])
@@ -40,7 +53,7 @@ def get_types(request):
 
 @api_view(['GET'])
 def get_db_schema(request, pk):
-    db_conf = DbConnection.objects.get(pk=pk)
+    db_conf = get_object_or_404(DbConnection, pk=pk)
     return JsonResponse(db_conf.get_schema(), safe=False)
 
 

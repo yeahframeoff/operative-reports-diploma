@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import DbConnection, WidgetConfig
+from .models import DbConnection, Widget, Dashboard
 
 
 class DBConnectionSerializer(serializers.ModelSerializer):
@@ -8,7 +8,19 @@ class DBConnectionSerializer(serializers.ModelSerializer):
         fields = 'id', 'host', 'port', 'user', 'password', 'db_name'
 
 
-class WidgetConfigSerializer(serializers.ModelSerializer):
+class DashboardSerializer(serializers.ModelSerializer):
     class Meta:
-        model = WidgetConfig
+        model = Dashboard
+        fields = 'id', 'name'
+
+
+class WidgetCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Widget
         fields = 'id', 'diagram_type', 'query'
+
+
+class WidgetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Widget
+        fields = 'id', 'diagram_type', 'query', 'dashboard'

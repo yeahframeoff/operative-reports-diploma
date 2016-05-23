@@ -93,7 +93,11 @@ class DbConnection(models.Model):
         return {'tables': tables}
 
 
-class WidgetConfig(models.Model):
+class Dashboard(models.Model):
+    name = models.CharField(max_length=32)
+
+
+class Widget(models.Model):
     diagram_type = models.CharField(max_length=1, choices=DIAGRAM_TYPES)
     query = models.TextField()
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
+    dashboard = models.ForeignKey(Dashboard)

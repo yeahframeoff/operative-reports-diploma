@@ -31,8 +31,11 @@ urlpatterns = [
     url(r'^remote-db/(?P<pk>\d+)/?$', remote_db_views.DatabaseConnectionAPIView.as_view()),
     url(r'^remote-db/(?P<pk>\d+)/schema$', remote_db_views.get_db_schema),
     url(r'^remote-db/(?P<pk>\d+)/check-connection$', remote_db_views.CheckConnectionView.as_view()),
-
-    url(r'^widgets/$', remote_db_views.WidgetConfigCreateAPIView.as_view()),
-    url(r'^widgets/(?P<pk>\d+)/?', remote_db_views.WidgetConfigAPIView.as_view()),
+    url(r'^api/dashboard/$', remote_db_views.DashboardCreateAPIView.as_view()),
+    url(r'^api/dashboard/(?P<pk>\d+)/?$', remote_db_views.DashboardAPIView.as_view()),
+    url(r'^api/dashboard/(?P<dashboard_pk>\d+)/widget/$', remote_db_views.WidgetCreateAPIView.as_view()),
+    url(r'^api/dashboard/widget/(?P<pk>\d+)$', remote_db_views.WidgetAPIView.as_view()),
+    url(r'^widgets/$', remote_db_views.WidgetCreateAPIView.as_view()),
+    url(r'^widgets/(?P<pk>\d+)/?', remote_db_views.WidgetAPIView.as_view()),
 
 ]
