@@ -54,6 +54,44 @@ class DbConnection(models.Model):
             error_message = str(e)
             return self.CheckConnectionResult(False, error_message)
 
+    def _dictfetchall(self, cursor):
+        columns = [col[0] for col in cursor.description]
+        return [
+            dict(zip(columns, row))
+            for row in cursor.fetchall()
+        ]
+
+    def get_schema(self):
+        conn = self.conn
+        cursor = conn.cursor()
+        query = """
+            SELECT table_name,
+                   COLUMN_NAME,
+                   udt_name as short_type_name,
+                   data_type as long_type_name,
+                   character_maximum_length as char_max_len
+            FROM information_schema.columns
+            WHERE table_catalog = '%s' and table_schema = 'public'
+            ORDER BY ordinal_position;
+        """ % self.db_name
+        cursor.execute(query)
+        data = self._dictfetchall(cursor)
+        conn.close()
+        grouped = {}
+
+        for item in data:
+            item_cp = dict((k, item[k]) for k in item if k != 'table_name')
+            table_name = item['table_name']
+            grouped.setdefault(table_name, []).append(item_cp)
+        tables = [
+            {
+                'table_name': k,
+                'columns': grouped[k]
+            } for k in grouped
+        ]
+
+        return {'tables': tables}
+
 
 class WidgetConfig(models.Model):
     diagram_type = models.CharField(max_length=1, choices=DIAGRAM_TYPES)
