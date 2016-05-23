@@ -84,7 +84,7 @@ def get_db_schema(request, pk):
     print(tables)
 
     connection.close()
-    return JsonResponse(data, safe=False)
+    return JsonResponse({'tables': tables}, safe=False)
 
 
 def _check_connection(db_conf):
