@@ -45,14 +45,18 @@ class DashboardAPIView(drf_generics.RetrieveUpdateDestroyAPIView):
     queryset = Dashboard.objects.all()
 
 
-class WidgetCreateAPIView(drf_generics.ListCreateAPIView):
+class WidgetListCreateAPIView(drf_generics.ListCreateAPIView):
     serializer_class = WidgetCreateSerializer
-    queryset = Widget.objects.all()
-
     lookup_field = 'dashboard_pk'
 
     def perform_create(self, serializer):
         serializer.save(dashboard_id=self.kwargs['dashboard_pk'])
+
+    def get_queryset(self):
+        if self.request.method == 'GET':
+            return Widget.objects.filter(dashboard=self.kwargs['dashboard_pk'])
+        else:
+            return Widget.objects.all()
 
 
 class WidgetAPIView(drf_generics.RetrieveUpdateDestroyAPIView):
