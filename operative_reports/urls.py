@@ -36,7 +36,4 @@ urlpatterns = [
     url(r'^api/dashboard/(?P<pk>\d+)/?$', remote_db_views.DashboardAPIView.as_view()),
     url(r'^api/dashboard/(?P<dashboard_pk>\d+)/widget/$', remote_db_views.WidgetCreateAPIView.as_view()),
     url(r'^api/dashboard/widget/(?P<pk>\d+)$', remote_db_views.WidgetAPIView.as_view()),
-    url(r'^widgets/$', remote_db_views.WidgetCreateAPIView.as_view()),
-    url(r'^widgets/(?P<pk>\d+)/?', remote_db_views.WidgetAPIView.as_view()),
-
 ]
