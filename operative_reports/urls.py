@@ -23,9 +23,10 @@ from .view import hello, db_test
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('djoser.urls.authtoken')),
+    url(r'^auth/users/?$', remote_db_views.CreateUserAPIView.as_view()),
     url(r'^hello/?$', hello),
     url(r'^db_info/?$', db_test),
-    url(r'^api/diagram-types/?', remote_db_views.get_types),
+    url(r'^api/diagram-types/?$', remote_db_views.get_types),
     url(r'^remote-db/$', remote_db_views.DatabaseConnectionCreateAPIView.as_view()),
     url(r'^remote-db/check-connection$', remote_db_views.CheckConnectionInstantView.as_view()),
     url(r'^remote-db/(?P<pk>\d+)/?$', remote_db_views.DatabaseConnectionAPIView.as_view()),

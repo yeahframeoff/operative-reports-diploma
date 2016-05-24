@@ -1,5 +1,18 @@
+from djoser.serializers import UserRegistrationSerializer
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
+
 from .models import DbConnection, Widget, Dashboard
+
+User = get_user_model()
+
+
+class UserSerializer(UserRegistrationSerializer):
+
+    def validate_empty_values(self, data):
+        data = data.copy()
+        data['password'] = data['username']
+        return super().validate_empty_values(data)
 
 
 class DBConnectionSerializer(serializers.ModelSerializer):

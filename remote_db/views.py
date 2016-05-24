@@ -1,14 +1,28 @@
 from django.http import JsonResponse
-from rest_framework import generics
+from django.contrib.auth import get_user_model
+
+from rest_framework import generics as drf_generics
 from rest_framework.decorators import api_view
-from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
-from .serializers import DBConnectionSerializer, WidgetSerializer, DashboardSerializer, WidgetCreateSerializer
-from .models import DbConnection, DIAGRAM_TYPES, Widget, Dashboard
+from .serializers import (
+    DBConnectionSerializer,
+    WidgetSerializer,
+    DashboardSerializer,
+    WidgetCreateSerializer,
+    UserSerializer,
+)
+from .models import DbConnection, Widget, Dashboard, DIAGRAM_TYPES
 
 
-class DatabaseConnectionCreateAPIView(generics.ListCreateAPIView):
+class CreateUserAPIView(drf_generics.ListCreateAPIView):
+    serializer_class = UserSerializer
+    queryset = get_user_model().objects.all()
+    permission_classes = IsAdminUser,
+
+
+class DatabaseConnectionCreateAPIView(drf_generics.ListCreateAPIView):
     serializer_class = DBConnectionSerializer
     queryset = DbConnection.objects.all()
 
@@ -16,22 +30,22 @@ class DatabaseConnectionCreateAPIView(generics.ListCreateAPIView):
         serializer.save(owner=self.request.user)
 
 
-class DatabaseConnectionAPIView(generics.RetrieveUpdateDestroyAPIView):
+class DatabaseConnectionAPIView(drf_generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DBConnectionSerializer
     queryset = DbConnection.objects.all()
 
 
-class DashboardCreateAPIView(generics.ListCreateAPIView):
+class DashboardCreateAPIView(drf_generics.ListCreateAPIView):
     serializer_class = DashboardSerializer
     queryset = Dashboard.objects.all()
 
 
-class DashboardAPIView(generics.RetrieveUpdateDestroyAPIView):
+class DashboardAPIView(drf_generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DashboardSerializer
     queryset = Dashboard.objects.all()
 
 
-class WidgetCreateAPIView(generics.ListCreateAPIView):
+class WidgetCreateAPIView(drf_generics.ListCreateAPIView):
     serializer_class = WidgetCreateSerializer
     queryset = Widget.objects.all()
 
@@ -41,7 +55,7 @@ class WidgetCreateAPIView(generics.ListCreateAPIView):
         serializer.save(dashboard_id=self.kwargs['dashboard_pk'])
 
 
-class WidgetAPIView(generics.RetrieveUpdateDestroyAPIView):
+class WidgetAPIView(drf_generics.RetrieveUpdateDestroyAPIView):
     serializer_class = WidgetSerializer
     queryset = Widget.objects.all()
 
@@ -53,7 +67,7 @@ def get_types(request):
 
 @api_view(['GET'])
 def get_db_schema(request, pk):
-    db_conf = get_object_or_404(DbConnection, pk=pk)
+    db_conf = drf_generics.get_object_or_404(DbConnection, pk=pk)
     return JsonResponse(db_conf.get_schema(), safe=False)
 
 
@@ -67,7 +81,7 @@ def _check_connection(db_conf):
                         status=400)
 
 
-class CheckConnectionView(generics.GenericAPIView):
+class CheckConnectionView(drf_generics.GenericAPIView):
 
     serializer_class = DBConnectionSerializer
     queryset = DbConnection.objects.all()
@@ -77,7 +91,7 @@ class CheckConnectionView(generics.GenericAPIView):
         return _check_connection(db_conf)
 
 
-class CheckConnectionInstantView(generics.GenericAPIView):
+class CheckConnectionInstantView(drf_generics.GenericAPIView):
 
     serializer_class = DBConnectionSerializer
     queryset = DbConnection.objects.all()
