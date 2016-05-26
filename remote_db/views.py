@@ -16,13 +16,16 @@ from .serializers import (
 from .models import DbConnection, Widget, Dashboard, DIAGRAM_TYPES
 
 
-class CreateUserAPIView(drf_generics.ListCreateAPIView):
+class UserCreateAPIView(drf_generics.ListCreateAPIView):
     serializer_class = UserSerializer
     queryset = get_user_model().objects.filter(is_superuser=False)
     permission_classes = IsAdminUser,
 
 
-# TODO views ot PUT/PATCH (edit) user and his dashboard bindings
+class UserAPIView(drf_generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = UserSerializer
+    queryset = get_user_model().objects.filter(is_superuser=False)
+    permission_classes = IsAdminUser,
 
 
 class DatabaseConnectionCreateAPIView(drf_generics.ListCreateAPIView):

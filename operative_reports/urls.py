@@ -23,7 +23,8 @@ from .view import hello, db_test
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('djoser.urls.authtoken')),
-    url(r'^auth/users/$', remote_db_views.CreateUserAPIView.as_view()),
+    url(r'^auth/users/$', remote_db_views.UserCreateAPIView.as_view()),
+    url(r'^auth/users/(?P<pk>\d+)/$', remote_db_views.UserAPIView.as_view()),
     # TODO views ot PUT/PATCH user and his dashboard bindings
     url(r'^hello/$', hello),
     url(r'^db_info/$', db_test),
