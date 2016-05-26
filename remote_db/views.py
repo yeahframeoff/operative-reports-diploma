@@ -22,6 +22,9 @@ class CreateUserAPIView(drf_generics.ListCreateAPIView):
     permission_classes = IsAdminUser,
 
 
+# TODO views ot PUT/PATCH (edit) user and his dashboard bindings
+
+
 class DatabaseConnectionCreateAPIView(drf_generics.ListCreateAPIView):
     serializer_class = DBConnectionSerializer
     queryset = DbConnection.objects.all()

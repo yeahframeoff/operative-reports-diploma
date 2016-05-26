@@ -3,6 +3,7 @@ from collections import namedtuple
 from django.conf import settings
 from django.db import models
 from django.db.utils import load_backend
+from django.conf import settings
 
 
 DIAGRAM_TYPES = [
@@ -95,6 +96,7 @@ class DbConnection(models.Model):
 
 class Dashboard(models.Model):
     name = models.CharField(max_length=32)
+    user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='dashboards')
 
 
 class Widget(models.Model):

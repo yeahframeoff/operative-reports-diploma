@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('djoser.urls.authtoken')),
     url(r'^auth/users/$', remote_db_views.CreateUserAPIView.as_view()),
+    # TODO views ot PUT/PATCH user and his dashboard bindings
     url(r'^hello/$', hello),
     url(r'^db_info/$', db_test),
     url(r'^api/diagram-types/$', remote_db_views.get_types),
@@ -35,5 +36,5 @@ urlpatterns = [
     url(r'^api/dashboard/$', remote_db_views.DashboardCreateAPIView.as_view()),
     url(r'^api/dashboard/(?P<pk>\d+)/$', remote_db_views.DashboardAPIView.as_view()),
     url(r'^api/dashboard/(?P<dashboard_pk>\d+)/widget/$', remote_db_views.WidgetListCreateAPIView.as_view()),
-    url(r'^api/dashboard/widget/(?P<pk>\d+)$', remote_db_views.WidgetAPIView.as_view()),
+    url(r'^api/dashboard/widget/(?P<pk>\d+)/$', remote_db_views.WidgetAPIView.as_view()),
 ]

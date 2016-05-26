@@ -9,10 +9,24 @@ User = get_user_model()
 
 class UserSerializer(UserRegistrationSerializer):
 
+    dashboards = serializers.PrimaryKeyRelatedField(many=True, queryset=Dashboard.objects.all())
+
+    class Meta(UserRegistrationSerializer.Meta):
+        fields = list(UserRegistrationSerializer.Meta.fields) + ['dashboards']
+
     def validate_empty_values(self, data):
         data = data.copy()
         data['password'] = data['username']
         return super().validate_empty_values(data)
+
+    def create(self, validated_data):
+        dashboards = validated_data['dashboards']
+        del validated_data['dashboards']
+        user = super().create(validated_data)
+        user.dashboards.set(dashboards)
+        return user
+
+    # TODO implement update of dashboards binding for PUT/PATCH
 
 
 class DBConnectionSerializer(serializers.ModelSerializer):
