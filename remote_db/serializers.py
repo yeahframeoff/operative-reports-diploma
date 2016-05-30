@@ -1,4 +1,4 @@
-from djoser.serializers import UserRegistrationSerializer
+from djoser.serializers import UserRegistrationSerializer, UserSerializer
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -7,7 +7,7 @@ from .models import DbConnection, Widget, Dashboard
 User = get_user_model()
 
 
-class UserSerializer(UserRegistrationSerializer):
+class UserCreateSerializer(UserRegistrationSerializer):
 
     dashboards = serializers.PrimaryKeyRelatedField(many=True, queryset=Dashboard.objects.all())
 
@@ -26,7 +26,15 @@ class UserSerializer(UserRegistrationSerializer):
         user.dashboards.set(dashboards)
         return user
 
-    # TODO implement update of dashboards binding for PUT/PATCH
+
+class UserShowSerializer(UserSerializer):
+    role = serializers.SerializerMethodField()
+
+    class Meta(UserSerializer.Meta):
+        fields = list(UserSerializer.Meta.fields) + ['role']
+
+    def get_role(self, obj):
+        return 'admin' if obj.is_superuser else 'user'
 
 
 class DBConnectionSerializer(serializers.ModelSerializer):

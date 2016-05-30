@@ -22,6 +22,7 @@ from remote_db import views as remote_db_views
 from .view import hello, db_test
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^auth/me/$', remote_db_views.UserMeView.as_view()),
     url(r'^auth/', include('djoser.urls.authtoken')),
     url(r'^auth/users/$', remote_db_views.UserCreateAPIView.as_view()),
     url(r'^auth/users/(?P<pk>\d+)/$', remote_db_views.UserAPIView.as_view()),

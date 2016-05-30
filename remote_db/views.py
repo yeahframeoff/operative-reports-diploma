@@ -5,25 +5,32 @@ from rest_framework import generics as drf_generics
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
+from djoser.views import UserView as DjoserUserMeView
+
 
 from .serializers import (
     DBConnectionSerializer,
     WidgetSerializer,
     DashboardSerializer,
     WidgetCreateSerializer,
-    UserSerializer,
+    UserCreateSerializer,
+    UserShowSerializer,
 )
 from .models import DbConnection, Widget, Dashboard, DIAGRAM_TYPES
 
 
 class UserCreateAPIView(drf_generics.ListCreateAPIView):
-    serializer_class = UserSerializer
+    serializer_class = UserCreateSerializer
     queryset = get_user_model().objects.filter(is_superuser=False)
     permission_classes = IsAdminUser,
 
 
+class UserMeView(DjoserUserMeView):
+    serializer_class = UserShowSerializer
+
+
 class UserAPIView(drf_generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = UserSerializer
+    serializer_class = UserCreateSerializer
     queryset = get_user_model().objects.filter(is_superuser=False)
     permission_classes = IsAdminUser,
 

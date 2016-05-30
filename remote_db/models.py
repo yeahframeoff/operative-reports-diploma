@@ -101,5 +101,6 @@ class Dashboard(models.Model):
 
 class Widget(models.Model):
     diagram_type = models.CharField(max_length=1, choices=DIAGRAM_TYPES)
+
     query = models.TextField()
     dashboard = models.ForeignKey(Dashboard)
