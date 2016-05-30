@@ -16,7 +16,8 @@ class UserCreateSerializer(UserRegistrationSerializer):
 
     def validate_empty_values(self, data):
         data = data.copy()
-        data['password'] = data['username']
+        if 'username' in data:
+            data['password'] = data['username']
         return super().validate_empty_values(data)
 
     def create(self, validated_data):
