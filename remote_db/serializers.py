@@ -12,19 +12,20 @@ class UserCreateSerializer(UserRegistrationSerializer):
     dashboards = serializers.PrimaryKeyRelatedField(many=True, queryset=Dashboard.objects.all())
 
     class Meta(UserRegistrationSerializer.Meta):
-        fields = list(UserRegistrationSerializer.Meta.fields) + ['dashboards']
-
-    def validate_empty_values(self, data):
-        data = data.copy()
-        if 'username' in data:
-            data['password'] = data['username']
-        return super().validate_empty_values(data)
+        fields = [x for x in list(UserRegistrationSerializer.Meta.fields) if x != 'password'] + ['dashboards']
 
     def create(self, validated_data):
         dashboards = validated_data['dashboards']
         del validated_data['dashboards']
         user = super().create(validated_data)
+        user.set_password(user.username)
+        user.save()
         user.dashboards.set(dashboards)
+        return user
+
+    def update(self, instance, validated_data):
+        user = super().update(instance, validated_data)
+        user.set_password(user.username)
         return user
 
 
