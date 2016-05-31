@@ -1,6 +1,5 @@
 from collections import namedtuple
 
-from django.conf import settings
 from django.db import models
 from django.db.utils import load_backend
 from django.conf import settings
@@ -24,7 +23,7 @@ class DbConnection(models.Model):
 
     def get_config(self):
         return {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'ENGINE': 'django.db.backends.postgresql',
             'NAME': self.db_name,
             'USER': self.user,
             'PASSWORD': self.password,
@@ -63,8 +62,6 @@ class DbConnection(models.Model):
         ]
 
     def get_schema(self):
-        conn = self.conn
-        cursor = conn.cursor()
         query = """
             SELECT table_name,
                    COLUMN_NAME,
@@ -75,9 +72,7 @@ class DbConnection(models.Model):
             WHERE table_catalog = '%s' and table_schema = 'public'
             ORDER BY ordinal_position;
         """ % self.db_name
-        cursor.execute(query)
-        data = self._dictfetchall(cursor)
-        conn.close()
+        data = self.run_query(query)
         grouped = {}
 
         for item in data:
@@ -93,6 +88,14 @@ class DbConnection(models.Model):
 
         return {'tables': tables}
 
+    def run_query(self, query):
+        conn = self.conn
+        cursor = conn.cursor()
+        cursor.execute(query)
+        data = self._dictfetchall(cursor)
+        conn.close()
+        return data
+
 
 class Dashboard(models.Model):
     name = models.CharField(max_length=32)
@@ -101,6 +104,9 @@ class Dashboard(models.Model):
 
 class Widget(models.Model):
     diagram_type = models.CharField(max_length=1, choices=DIAGRAM_TYPES)
-
+    db_connection = models.ForeignKey(DbConnection)
     query = models.TextField()
     dashboard = models.ForeignKey(Dashboard)
+
+    def display(self):
+        return self.db_connection.run_query(self.query)

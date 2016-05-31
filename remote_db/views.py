@@ -3,9 +3,18 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import generics as drf_generics
 from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, BasePermission
 from rest_framework.response import Response
 from djoser.views import UserView as DjoserUserMeView
+
+
+class IsAllowedToWatchDashboard(BasePermission):
+    """
+    Allows access only to admin users.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        return request.user and request.user.dashboard_set(dashboard_id=obj.pk).exists()
 
 
 from .serializers import (
@@ -38,6 +47,7 @@ class UserAPIView(drf_generics.RetrieveUpdateDestroyAPIView):
 class DatabaseConnectionCreateAPIView(drf_generics.ListCreateAPIView):
     serializer_class = DBConnectionSerializer
     queryset = DbConnection.objects.all()
+    permission_classes = IsAdminUser,
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -46,21 +56,25 @@ class DatabaseConnectionCreateAPIView(drf_generics.ListCreateAPIView):
 class DatabaseConnectionAPIView(drf_generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DBConnectionSerializer
     queryset = DbConnection.objects.all()
+    permission_classes = IsAdminUser,
 
 
 class DashboardCreateAPIView(drf_generics.ListCreateAPIView):
     serializer_class = DashboardSerializer
     queryset = Dashboard.objects.all()
+    permission_classes = IsAdminUser,
 
 
 class DashboardAPIView(drf_generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DashboardSerializer
     queryset = Dashboard.objects.all()
+    permission_classes = IsAllowedToWatchDashboard,
 
 
 class WidgetListCreateAPIView(drf_generics.ListCreateAPIView):
     serializer_class = WidgetCreateSerializer
     lookup_field = 'dashboard_pk'
+    permission_classes = IsAdminUser,
 
     def perform_create(self, serializer):
         serializer.save(dashboard_id=self.kwargs['dashboard_pk'])
@@ -75,6 +89,12 @@ class WidgetListCreateAPIView(drf_generics.ListCreateAPIView):
 class WidgetAPIView(drf_generics.RetrieveUpdateDestroyAPIView):
     serializer_class = WidgetSerializer
     queryset = Widget.objects.all()
+
+
+@api_view(['GET'])
+def widget_display(request, pk):
+    widget = drf_generics.get_object_or_404(Widget, pk=pk)
+    return Response({'data': widget.display()})
 
 
 @api_view(['GET'])
