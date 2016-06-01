@@ -54,7 +54,7 @@ class DashboardSerializer(serializers.ModelSerializer):
 class WidgetCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Widget
-        fields = 'id', 'diagram_type', 'query'
+        fields = 'id', 'diagram_type', 'query', 'columns', 'db_connection'
 
 
 class WidgetSerializer(serializers.ModelSerializer):

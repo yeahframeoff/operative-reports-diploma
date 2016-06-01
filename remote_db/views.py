@@ -8,15 +8,6 @@ from rest_framework.response import Response
 from djoser.views import UserView as DjoserUserMeView
 
 
-class IsAllowedToWatchDashboard(BasePermission):
-    """
-    Allows access only to admin users.
-    """
-
-    def has_object_permission(self, request, view, obj):
-        return request.user and request.user.dashboard_set(dashboard_id=obj.pk).exists()
-
-
 from .serializers import (
     DBConnectionSerializer,
     WidgetSerializer,
@@ -26,6 +17,15 @@ from .serializers import (
     UserShowSerializer,
 )
 from .models import DbConnection, Widget, Dashboard, DIAGRAM_TYPES
+
+
+class IsAllowedToWatchDashboard(BasePermission):
+    """
+    Allows access only to admin users.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        return request.user and request.user.dashboard_set(dashboard_id=obj.pk).exists()
 
 
 class UserCreateAPIView(drf_generics.ListCreateAPIView):
@@ -89,6 +89,18 @@ class WidgetListCreateAPIView(drf_generics.ListCreateAPIView):
 class WidgetAPIView(drf_generics.RetrieveUpdateDestroyAPIView):
     serializer_class = WidgetSerializer
     queryset = Widget.objects.all()
+
+
+@api_view(['GET'])
+def widget_raw_display(request, pk):
+    widget = drf_generics.get_object_or_404(Widget, pk=pk)
+    return Response({'data': widget.display_raw_query()})
+
+
+@api_view(['GET'])
+def widget_structured_display(request, pk):
+    widget = drf_generics.get_object_or_404(Widget, pk=pk)
+    return Response({'data': widget.display_structured_query()})
 
 
 @api_view(['GET'])

@@ -1,3 +1,4 @@
+import ast
 from collections import namedtuple
 
 from django.db import models
@@ -105,8 +106,30 @@ class Dashboard(models.Model):
 class Widget(models.Model):
     diagram_type = models.CharField(max_length=1, choices=DIAGRAM_TYPES)
     db_connection = models.ForeignKey(DbConnection)
-    query = models.TextField()
+    query = models.TextField(null=True)
+    columns = models.TextField(null=True)
     dashboard = models.ForeignKey(Dashboard)
 
+    def run_query(self, query):
+        return self.db_connection.run_query(query)
+
+    def display_raw_query(self):
+        return self.run_query(self.query)
+
+    def display_structured_query(self):
+        columns = ast.literal_eval(self.columns)
+        query = self.make_query_from_columns(columns)
+        return self.run_query(query)
+
     def display(self):
-        return self.db_connection.run_query(self.query)
+        if self.columns is not None:
+            return self.display_structured_query()
+        else:
+            return self.display_raw_query()
+
+    @staticmethod
+    def make_query_from_columns(columns):
+        tables = set(x[0] for x in columns)
+        fields_str = ', '.join('"%s"."%s"' % tuple(x[:2]) for x in columns)
+        tables_str = ', '.join(tables)
+        return 'select %s from %s;' % (fields_str, tables_str)
