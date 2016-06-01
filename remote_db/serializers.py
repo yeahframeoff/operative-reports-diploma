@@ -12,7 +12,10 @@ class UserCreateSerializer(UserRegistrationSerializer):
     dashboards = serializers.PrimaryKeyRelatedField(many=True, queryset=Dashboard.objects.all())
 
     class Meta(UserRegistrationSerializer.Meta):
-        fields = [x for x in list(UserRegistrationSerializer.Meta.fields) if x != 'password'] + ['dashboards']
+        fields = [
+                     x for x in list(UserRegistrationSerializer.Meta.fields)
+                     if x != 'password'
+                 ] + ['dashboards']
 
     def create(self, validated_data):
         dashboards = validated_data['dashboards']

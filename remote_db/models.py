@@ -20,7 +20,7 @@ class DbConnection(models.Model):
     password = models.CharField(max_length=32)
     db_name = models.CharField(max_length=32)
 
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='db_connections')
 
     def get_config(self):
         return {
@@ -100,7 +100,7 @@ class DbConnection(models.Model):
 
 class Dashboard(models.Model):
     name = models.CharField(max_length=32)
-    user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='dashboards')
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='dashboards')
 
 
 class Widget(models.Model):
@@ -108,7 +108,7 @@ class Widget(models.Model):
     db_connection = models.ForeignKey(DbConnection)
     query = models.TextField(null=True)
     columns = models.TextField(null=True)
-    dashboard = models.ForeignKey(Dashboard)
+    dashboard = models.ForeignKey(Dashboard, related_name='widgets')
 
     def run_query(self, query):
         return self.db_connection.run_query(query)

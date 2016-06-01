@@ -25,7 +25,11 @@ class IsAllowedToWatchDashboard(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        return request.user and request.user.dashboard_set(dashboard_id=obj.pk).exists()
+        return request.user and (
+                request.user.is_superuser
+                or
+                request.user.dashboards.filter(id=obj.pk).exists()
+            )
 
 
 class UserCreateAPIView(drf_generics.ListCreateAPIView):
